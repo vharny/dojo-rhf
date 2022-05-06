@@ -1,0 +1,20 @@
+@import '@axa-fr/react-toolkit-all/dist/style/bootstrap/grid.css';
+@import '@axa-fr/react-toolkit-all/dist/style/bootstrap/reboot.css';
+@import '@axa-fr/react-toolkit-icon/dist/af-icons.css';
+@import '@axa-fr/react-toolkit-all/dist/style/af-components.css';
+@import '@axa-fr/react-toolkit-core/dist/assets/fonts/icons/af-icons.css';
+@import '@axa-fr/react-toolkit-core/dist/assets/scss/core.scss';
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
