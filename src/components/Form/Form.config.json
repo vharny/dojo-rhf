@@ -1,0 +1,27 @@
+{
+  "genderOptions": [
+    {
+      "id": "male",
+      "label": "M",
+      "value": "M"
+    },
+    {
+      "id": "female",
+      "label": "F",
+      "value": "F"
+    },
+    {
+      "id": "other",
+      "label": "Autre",
+      "value": "O"
+    }
+  ],
+  "defaultFieldsErrorsState": {
+    "gender": [],
+    "firstName": [],
+    "lastName": [],
+    "birthdate": [],
+    "email": [],
+    "confirmEmail": []
+  }
+}

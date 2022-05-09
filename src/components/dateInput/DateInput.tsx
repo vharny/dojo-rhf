@@ -1,6 +1,12 @@
-import { DateInputProps } from "./App.types";
+import { DateInputProps } from "./DateInput.types";
 
-export const DateInput = ({ id, value, onChange, onBlur, message } : DateInputProps) => (
+export const DateInput = ({
+  id,
+  value,
+  onChange,
+  onBlur,
+  message,
+}: DateInputProps) => (
   <div className="row af-form__group af-form__group--required">
     <div className="col-md-2">
       <label htmlFor={id} className="af-form__group-label">
@@ -13,7 +19,9 @@ export const DateInput = ({ id, value, onChange, onBlur, message } : DateInputPr
           id={id}
           type={"date"}
           value={value}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange(e.target.value)
+          }
           onBlur={onBlur}
           className="af-form__input-text col-md-3"
         />

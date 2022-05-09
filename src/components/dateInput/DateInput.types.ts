@@ -1,11 +1,3 @@
-import React from "react";
-
-export type FieldsErrors = {
-    [fieldId: string]: string[];
-};
-
-export type Gender = "M" | "F" | "O";
-
 export type DateInputProps = {
     id: string;
     label: string

@@ -1,131 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { SelectInput } from "@axa-fr/react-toolkit-form-input-select";
 import { TextInput } from "@axa-fr/react-toolkit-form-input-text";
-import { DateInput } from "./DateInput";
+import { DateInput } from "../dateInput/DateInput";
 
-import { FieldsErrors, Gender } from "./App.types";
-import "./App.css";
+import { genderOptions, defaultFieldsErrorsState } from "./Form.config.json";
 
-const genderOptions = [
-  {
-    id: "male",
-    label: "M",
-    value: "M",
-  },
-  {
-    id: "female",
-    label: "F",
-    value: "F",
-  },
-  {
-    id: "other",
-    label: "Autre",
-    value: "O",
-  },
-];
+import { useValidateForm } from "../../hooks/useValidateForm/useValidateForm.hook";
 
-const errorsMessage = {
-  required: "Ce champ est requis",
-  invalidFormat: "Format invalide",
-  mismatchFields: "Les champs ne correspondent pas",
-};
+import { Gender } from "./Form.types";
 
-const addFieldError = (
-  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>,
-  fieldId: string,
-  errorMessage: string
-) => {
-  setFieldsErrors((prevFieldsErrorsState: any) => {
-    return {
-      ...prevFieldsErrorsState,
-      [fieldId]: [
-        ...new Set([...prevFieldsErrorsState[fieldId], errorMessage]),
-      ],
-    };
-  });
-};
+import "./Form.css";
 
-const removeFieldError = (
-  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>,
-  fieldId: string,
-  errorMessage: string
-) => {
-  setFieldsErrors((prevFieldsErrorsState: any) => {
-    return {
-      ...prevFieldsErrorsState,
-      [fieldId]: [
-        ...new Set([
-          ...prevFieldsErrorsState[fieldId].filter(
-            (currErrorMessage: string) => currErrorMessage !== errorMessage
-          ),
-        ]),
-      ],
-    };
-  });
-};
-
-const validateFieldRules = (
-  fieldId: string,
-  fieldState: string,
-  fieldValidationRules: any,
-  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>
-) => {
-  Object.entries(fieldValidationRules).forEach(([ruleName, ruleValue]) => {
-    switch (ruleName) {
-      case "required":
-        if (ruleValue) {
-          !Boolean(fieldState)
-            ? addFieldError(setFieldsErrors, fieldId, errorsMessage.required)
-            : removeFieldError(
-                setFieldsErrors,
-                fieldId,
-                errorsMessage.required
-              );
-        }
-        break;
-      case "regexValidation":
-        !fieldState.match(ruleValue as string)
-          ? addFieldError(setFieldsErrors, fieldId, errorsMessage.invalidFormat)
-          : removeFieldError(
-              setFieldsErrors,
-              fieldId,
-              errorsMessage.invalidFormat
-            );
-        break;
-      case "mustBeEquals":
-        !(ruleValue as string[]).every((value) => value === ruleValue[0])
-          ? addFieldError(
-              setFieldsErrors,
-              fieldId,
-              errorsMessage.mismatchFields
-            )
-          : removeFieldError(
-              setFieldsErrors,
-              fieldId,
-              errorsMessage.mismatchFields
-            );
-        break;
-      default:
-        break;
-    }
-  });
-};
-
-function App() {
+export const Form = () => {
   const [gender, setGender] = useState<Gender | "">("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [confirmEmail, setconfirmEmail] = useState("");
-  const [fieldsErrors, setFieldsErrors] = useState<FieldsErrors>({
-    gender: [],
-    firstName: [],
-    lastName: [],
-    birthdate: [],
-    email: [],
-    confirmEmail: [],
-  });
+
+  const { fieldsErrors, setFieldsErrors, validateFieldRules } = useValidateForm(
+    { defaultFieldsErrorsState }
+  );
 
   const fieldsValidationRules = {
     gender: {
@@ -151,7 +47,6 @@ function App() {
       mustBeEquals: [email, confirmEmail],
     },
   };
-
   useEffect(() => {
     fieldsValidationRules.confirmEmail.mustBeEquals = [email, confirmEmail];
   }, [email, confirmEmail]);
@@ -274,6 +169,7 @@ function App() {
             setFieldsErrors
           )
         }
+        placeholder="x@y.z"
         message={fieldsErrors["email"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -306,6 +202,4 @@ function App() {
       </div>
     </form>
   );
-}
-
-export default App;
+};
