@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SelectInput } from "@axa-fr/react-toolkit-form-input-select";
 import { TextInput } from "@axa-fr/react-toolkit-form-input-text";
 import { DateInput } from "./DateInput";
@@ -26,9 +26,89 @@ const genderOptions = [
 
 const errorsMessage = {
   required: "Ce champ est requis",
-  invalidEmail: "Email invalide",
-  emailsMismatch: "Les emails ne correspondent pas",
-  invalidDate: "Date invalide",
+  invalidFormat: "Format invalide",
+  mismatchFields: "Les champs ne correspondent pas",
+};
+
+const addFieldError = (
+  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>,
+  fieldId: string,
+  errorMessage: string
+) => {
+  setFieldsErrors((prevFieldsErrorsState: any) => {
+    return {
+      ...prevFieldsErrorsState,
+      [fieldId]: [
+        ...new Set([...prevFieldsErrorsState[fieldId], errorMessage]),
+      ],
+    };
+  });
+};
+
+const removeFieldError = (
+  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>,
+  fieldId: string,
+  errorMessage: string
+) => {
+  setFieldsErrors((prevFieldsErrorsState: any) => {
+    return {
+      ...prevFieldsErrorsState,
+      [fieldId]: [
+        ...new Set([
+          ...prevFieldsErrorsState[fieldId].filter(
+            (currErrorMessage: string) => currErrorMessage !== errorMessage
+          ),
+        ]),
+      ],
+    };
+  });
+};
+
+const validateFieldRules = (
+  fieldId: string,
+  fieldState: string,
+  fieldValidationRules: any,
+  setFieldsErrors: React.Dispatch<React.SetStateAction<FieldsErrors>>
+) => {
+  Object.entries(fieldValidationRules).forEach(([ruleName, ruleValue]) => {
+    switch (ruleName) {
+      case "required":
+        if (ruleValue) {
+          !Boolean(fieldState)
+            ? addFieldError(setFieldsErrors, fieldId, errorsMessage.required)
+            : removeFieldError(
+                setFieldsErrors,
+                fieldId,
+                errorsMessage.required
+              );
+        }
+        break;
+      case "regexValidation":
+        !fieldState.match(ruleValue as string)
+          ? addFieldError(setFieldsErrors, fieldId, errorsMessage.invalidFormat)
+          : removeFieldError(
+              setFieldsErrors,
+              fieldId,
+              errorsMessage.invalidFormat
+            );
+        break;
+      case "mustBeEquals":
+        !(ruleValue as string[]).every((value) => value === ruleValue[0])
+          ? addFieldError(
+              setFieldsErrors,
+              fieldId,
+              errorsMessage.mismatchFields
+            )
+          : removeFieldError(
+              setFieldsErrors,
+              fieldId,
+              errorsMessage.mismatchFields
+            );
+        break;
+      default:
+        break;
+    }
+  });
 };
 
 function App() {
@@ -47,127 +127,34 @@ function App() {
     confirmEmail: [],
   });
 
-  const validateRequiredFields = (fieldId: string, fieldState: string) => {
-    if (!Boolean(fieldState)) {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          [fieldId]: [
-            ...new Set([
-              ...prevFieldsErrorsState[fieldId],
-              errorsMessage.required,
-            ]),
-          ],
-        };
-      });
-    } else {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          [fieldId]: [
-            ...new Set([
-              ...prevFieldsErrorsState[fieldId].filter(
-                (errorMessage) => errorMessage !== errorsMessage.required
-              ),
-            ]),
-          ],
-        };
-      });
-    }
+  const fieldsValidationRules = {
+    gender: {
+      required: true,
+    },
+    firstName: {
+      required: true,
+    },
+    lastName: {
+      required: true,
+    },
+    birthdate: {
+      required: true,
+      regexValidation: "^\\d{4}-\\d{2}-\\d{2}$",
+    },
+    email: {
+      required: true,
+      regexValidation:
+        "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$",
+    },
+    confirmEmail: {
+      required: true,
+      mustBeEquals: [email, confirmEmail],
+    },
   };
 
-  const validateBirthdate = (fieldState: string) => {
-    const dateValidationRegex = new RegExp(
-      /^\d{4}-\d{2}-\d{2}$/
-    );
-      console.log("fieldState", fieldState);
-    if (!fieldState.match(dateValidationRegex)) {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          birthdate: [
-            ...new Set([
-              ...prevFieldsErrorsState["birthdate"],
-              errorsMessage.invalidDate,
-            ]),
-          ],
-        };
-      });
-    } else {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          birthdate: [
-            ...new Set([
-              ...prevFieldsErrorsState["birthdate"].filter(
-                (errorMessage) => errorMessage !== errorsMessage.invalidDate
-              ),
-            ]),
-          ],
-        };
-      });
-    }
-  }
-
-  const validateEmail = (fieldState: string) => {
-    const weakEmailValidationRegex = new RegExp(
-      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    );
-
-    if (!fieldState.match(weakEmailValidationRegex)) {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          email: [
-            ...new Set([
-              ...prevFieldsErrorsState["email"],
-              errorsMessage.invalidEmail,
-            ]),
-          ],
-        };
-      });
-    } else {
-      setFieldsErrors((prevFieldsErrorsState) => {
-        return {
-          ...prevFieldsErrorsState,
-          email: [
-            ...new Set([
-              ...prevFieldsErrorsState["email"].filter(
-                (errorMessage) => errorMessage !== errorsMessage.invalidEmail
-              ),
-            ]),
-          ],
-        };
-      });
-    }
-  };
-
-  const compareEmails = (email: string, confirmEmail: string) =>
-    email !== confirmEmail
-      ? setFieldsErrors((prevFieldsErrorsState) => {
-          return {
-            ...prevFieldsErrorsState,
-            confirmEmail: [
-              ...new Set([
-                ...prevFieldsErrorsState["confirmEmail"],
-                errorsMessage.emailsMismatch,
-              ]),
-            ],
-          };
-        })
-      : setFieldsErrors((prevFieldsErrorsState) => {
-          return {
-            ...prevFieldsErrorsState,
-            confirmEmail: [
-              ...new Set([
-                ...prevFieldsErrorsState["confirmEmail"].filter(
-                  (errorMessage) =>
-                    errorMessage !== errorsMessage.emailsMismatch
-                ),
-              ]),
-            ],
-          };
-        });
+  useEffect(() => {
+    fieldsValidationRules.confirmEmail.mustBeEquals = [email, confirmEmail];
+  }, [email, confirmEmail]);
 
   const validateForm = (formEvent: React.FormEvent) => {
     formEvent.preventDefault();
@@ -180,14 +167,18 @@ function App() {
       { email },
       { confirmEmail },
     ].forEach((field) => {
-      const [fieldId, fieldState]: string[] = Object.entries(field)[0];
+      const [fieldId, fieldState] = Object.entries(field)[0];
+      const fieldValidationRules = fieldsValidationRules[
+        fieldId as keyof fieldsValidationRules
+      ] as typeof fieldsValidationRules;
 
-      validateRequiredFields(fieldId, fieldState);
+      validateFieldRules(
+        fieldId,
+        fieldState,
+        fieldValidationRules,
+        setFieldsErrors
+      );
     });
-
-    validateBirthdate(birthdate);
-    validateEmail(email);
-    compareEmails(email, confirmEmail);
   };
 
   return (
@@ -203,7 +194,14 @@ function App() {
         value={gender}
         placeholder="Sélectionnez une civilité"
         onChange={({ value }: { value: string }) => setGender(value as Gender)}
-        onBlur={() => validateRequiredFields("gender", gender)}
+        onBlur={() =>
+          validateFieldRules(
+            "gender",
+            gender,
+            fieldsValidationRules.gender,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["gender"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -214,7 +212,14 @@ function App() {
         value={firstName}
         size={21}
         onChange={({ value }: { value: string }) => setFirstName(value)}
-        onBlur={() => validateRequiredFields("firstName", firstName)}
+        onBlur={() =>
+          validateFieldRules(
+            "firstName",
+            firstName,
+            fieldsValidationRules.firstName,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["firstName"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -225,7 +230,14 @@ function App() {
         value={lastName}
         size={21}
         onChange={({ value }: { value: string }) => setLastName(value)}
-        onBlur={() => validateRequiredFields("lastName", lastName)}
+        onBlur={() =>
+          validateFieldRules(
+            "lastName",
+            lastName,
+            fieldsValidationRules.lastName,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["lastName"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -236,7 +248,14 @@ function App() {
         value={birthdate}
         size={21}
         onChange={setBirthdate}
-        onBlur={() => validateRequiredFields("birthdate", birthdate)}
+        onBlur={() =>
+          validateFieldRules(
+            "birthdate",
+            birthdate,
+            fieldsValidationRules.birthdate,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["birthdate"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -247,7 +266,14 @@ function App() {
         value={email}
         size={21}
         onChange={({ value }: { value: string }) => setEmail(value)}
-        onBlur={() => validateRequiredFields("email", email)}
+        onBlur={() =>
+          validateFieldRules(
+            "email",
+            email,
+            fieldsValidationRules.email,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["email"]?.join(" - ")}
         forceDisplayMessage
       />
@@ -258,7 +284,14 @@ function App() {
         value={confirmEmail}
         size={21}
         onChange={({ value }: { value: string }) => setconfirmEmail(value)}
-        onBlur={() => validateRequiredFields("confirmEmail", confirmEmail)}
+        onBlur={() =>
+          validateFieldRules(
+            "confirmEmail",
+            confirmEmail,
+            fieldsValidationRules.confirmEmail,
+            setFieldsErrors
+          )
+        }
         message={fieldsErrors["confirmEmail"]?.join(" - ")}
         forceDisplayMessage
       />
