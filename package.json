@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@axa-fr/react-toolkit-all": "2.0.0-alpha.5",
@@ -16,10 +17,15 @@
     "sass": "^1.51.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
+    "jest-cucumber": "^3.0.1",
+    "jsdom": "^19.0.0",
     "typescript": "^4.6.3",
-    "vite": "^2.9.7"
+    "vite": "^2.9.7",
+    "vitest": "^0.12.6"
   }
 }
