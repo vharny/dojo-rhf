@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SelectInput } from "@axa-fr/react-toolkit-form-input-select";
-import { TextInput } from "@axa-fr/react-toolkit-form-input-text";
+import { SelectInput, TextInput } from "@axa-fr/react-toolkit-all";
 import { DateInput } from "../dateInput/DateInput";
 
 import { genderOptions, defaultFieldsErrorsState } from "./Form.config.json";

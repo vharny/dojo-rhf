@@ -1,12 +1,9 @@
-import { Form } from "./components/Form/Form"
+import Form from "./components/Form";
 
 const App = () => (
   <div className="container-fluid">
     <div className="row">
-      <div
-        className="col-md-6"
-        style={{ overflow: "scroll", height: "100vh" }}
-      >
+      <div className="col-md-6" style={{ overflow: "scroll", height: "100vh" }}>
         <h1>DOJO REACT HOOF FORM</h1>
         <p>
           Le but de ce dojo est de vous familiariser à l'utilisation de la
@@ -32,8 +29,8 @@ const App = () => (
           </li>
         </ul>
         <p>
-          Tous les outils sont pré-installés pour que vous puissiez
-          entièrement terminer le dojo et les challenges.
+          Tous les outils sont pré-installés pour que vous puissiez entièrement
+          terminer le dojo et les challenges.
         </p>
         <h2>Sujet</h2>
         <p>
@@ -49,8 +46,8 @@ const App = () => (
           utiliser RHF.
         </p>
         <p>
-          Pour valider que la refactorisation soit correcte et nous assurer
-          que l'application continuera de fonctionner en production, il faudra
+          Pour valider que la refactorisation soit correcte et nous assurer que
+          l'application continuera de fonctionner en production, il faudra
           s'assurer que les tests passent toujours.
         </p>
         <h2>Challenges (optionnels)</h2>
@@ -74,12 +71,10 @@ const App = () => (
             </a>{" "}
             pour valider les champs du formulaire,
           </li>
+          <li>Persister les champs du formulaire avec le localStorage,</li>
           <li>
-            Persister les champs du formulaire avec le localStorage,
-          </li>
-          <li>
-            Ajouter un nouveau champ de formulaire conditionné par rapport à
-            un ou plusieurs autres champs.
+            Ajouter un nouveau champ de formulaire conditionné par rapport à un
+            ou plusieurs autres champs.
           </li>
         </ul>
       </div>
@@ -88,6 +83,6 @@ const App = () => (
       </div>
     </div>
   </div>
-)
+);
 
-export default App
+export default App;

@@ -12,9 +12,12 @@
     "@axa-fr/react-toolkit-all": "2.0.0-alpha.5",
     "@axa-fr/react-toolkit-core": "2.0.0-alpha.5",
     "@axa-fr/react-toolkit-icon": "2.0.0-alpha.5",
+    "@hookform/resolvers": "^2.8.10",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "sass": "^1.51.0"
+    "react-hook-form": "^7.31.3",
+    "sass": "^1.51.0",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
